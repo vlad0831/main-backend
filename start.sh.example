@@ -1,0 +1,47 @@
+# change the env var as needed
+export DEPLOY_ENV=dev # can switch between dev and prod
+export DOCKER_IMAGE_TAG=registry.gitlab.com/alliofintech/mobile-app/main-backend/allio-main-backend-$DEPLOY_ENV:latest
+export DOCKER_CONTAINER_NAME=allio-backend-$DEPLOY_ENV
+export NAMESPACE=allio-$DEPLOY_ENV
+export DOCKER_REGISTRY_USERNAME=username
+export DOCKER_REGISTRY_PASSWORD=password
+export DOCKER_REGISTRY_EMAIL=john.smith@example.com
+
+# comment/uncomment the lines to enable custom features
+
+# build docker image
+shell/docker/build.sh
+
+# push docker image to docker hub
+shell/docker/push.sh
+
+# create namespace
+shell/kubernetes/create-namespace.sh
+
+# create docker config
+# comment this after the first setup
+# change the file path as needed
+shell/kubernetes/create-docker-registry-config.sh
+
+# create credentials
+# comment this after the first setup
+shell/kubernetes/create-secret.sh
+
+# create configmap from env file
+shell/kubernetes/create-configmap.sh
+
+# create persistent volume
+# comment this after the first setup
+shell/kubernetes/create-pv.sh
+
+# deploy and expose postgres
+shell/kubernetes/create-postgres.sh
+
+# deploy nest-backend
+shell/kubernetes/create-nest-backend.sh
+
+# wait for the pod nest-backend to be ready
+sleep 30s
+
+# port-forward for localhost to access service in development
+shell/kubernetes/dev-port-forwarding.sh

@@ -1,0 +1,144 @@
+import { Migration } from '@mikro-orm/migrations';
+
+export class Migration20211019075509 extends Migration {
+  async up(): Promise<void> {
+    await this.execute(
+      'ALTER TABLE investment_questionnaire_option DROP CONSTRAINT IF EXISTS investment_questionnaire_option_description_unique'
+    );
+    const knex = this.getKnex();
+    const result = await this.execute(
+      knex
+        .insert(
+          [
+            {
+              name: 'investor level',
+              question: 'How would you describe yourself as an investor?',
+              category: 'Risk',
+              order: 1,
+            },
+            {
+              name: 'investment goal',
+              question: 'What is your goal for investing with Allio?',
+              category: 'Risk',
+              order: 2,
+            },
+            {
+              name: 'preferability of investment',
+              question:
+                'Are you passionate about investing in certain values or causes?',
+              category: 'Value',
+              order: 3,
+            },
+          ],
+          ['*']
+        )
+        .into('investment_questionnaire')
+    );
+
+    await this.execute(
+      knex
+        .insert(
+          [
+            // Investor level
+            {
+              questionnaire_id: result[0].id,
+              option: 'Newbie',
+              description:
+                'This is my first time investing but excited to get started',
+            },
+            {
+              questionnaire_id: result[0].id,
+              option: 'Beginner',
+              description:
+                'I know the basics, but could definitely use some help',
+            },
+            {
+              questionnaire_id: result[0].id,
+              option: 'Experienced',
+              description:
+                "I have a pretty good understanding of how markets work and I've invested before",
+            },
+            {
+              questionnaire_id: result[0].id,
+              option: 'Expert',
+              description:
+                'I have a deep understanding of markets and investing',
+            },
+
+            // Investment goal
+
+            {
+              questionnaire_id: result[1].id,
+              option: 'To the moon',
+              description:
+                'I am seeking high return potential and I am willing to accept more market risk',
+            },
+            {
+              questionnaire_id: result[1].id,
+              option: 'Growth potential',
+              description:
+                'I am willing to weather market ups and downs to try an get higher returns',
+            },
+            {
+              questionnaire_id: result[1].id,
+              option: 'Not too hot, not too cold',
+              description:
+                'I want to balance growth and stability of my money equally',
+            },
+            {
+              questionnaire_id: result[1].id,
+              option: 'Conservative',
+              description:
+                'Still looking for growth but I tend to play it safe',
+            },
+            {
+              questionnaire_id: result[1].id,
+              option: 'Super conservative',
+              description:
+                'Managing the volatility of my money is the priority over growth',
+            },
+
+            // Preferability of investment
+
+            {
+              questionnaire_id: result[2].id,
+              option: 'Minority Empowerment (NAACP)',
+              description: '',
+            },
+            {
+              questionnaire_id: result[2].id,
+              option: 'Woman-led companies',
+              description: '',
+            },
+            {
+              questionnaire_id: result[2].id,
+              option: 'Gender Equality (LGBTQ+)',
+              description: '',
+            },
+            {
+              questionnaire_id: result[2].id,
+              option: 'Renewable Energy',
+              description: '',
+            },
+            {
+              questionnaire_id: result[2].id,
+              option: 'Clean water',
+              description: '',
+            },
+            {
+              questionnaire_id: result[2].id,
+              option: 'Spiritual / Biblical',
+              description: '',
+            },
+          ],
+          ['*']
+        )
+        .into('investment_questionnaire_option')
+    );
+  }
+
+  async down(): Promise<void> {
+    this.addSql('DELETE FROM investment_questionnaire_option');
+    this.addSql('DELETE FROM investment_questionnaire');
+  }
+}

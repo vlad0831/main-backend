@@ -1,0 +1,16 @@
+{
+  "configurations": [
+    {
+      "command": "pnpm start",
+      "name": "Run pnpm start",
+      "request": "launch",
+      "type": "node-terminal"
+    },
+    {
+      "command": "pnpm test",
+      "name": "Run pnpm test",
+      "request": "launch",
+      "type": "node-terminal"
+    }
+  ]
+}

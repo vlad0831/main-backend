@@ -1,0 +1,27 @@
+{
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
+  "rootDir": "../",
+  "transform": {
+    "^.+\\.(t|j)s$": "@swc/jest"
+  },
+  "testEnvironment": "node",
+  "testRegex": ".e2e-spec.(t|j)s$",
+  "globals": {
+    "NODE_ENV": "test"
+  },
+  "coveragePathIgnorePatterns": [
+    "/node_modules/",
+    "next.config.js",
+    ".json",
+    ".snap"
+  ],
+  "moduleNameMapper": {
+    "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/test/__mocks__/mocks.js",
+    "\\.(css|less|scss)$": "<rootDir>/test/__mocks__/mocks.js",
+    "^~(.*)$": "<rootDir>/src/$1"
+  }
+}

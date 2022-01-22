@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nest-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nest-backend
+  template:
+    metadata:
+      labels:
+        app: nest-backend
+    spec:
+      containers:
+        - name: nest-backend
+          image: DOCKER_IMAGE_TAG # change the image name here
+          envFrom:
+          - configMapRef:
+              name: allio-env
+          env:
+          - name: MIKRO_ORM_HOST
+            value: postgres
+          ports:
+            - containerPort: 3000
+          command: ["pnpm", "run","start:prod"]
+          imagePullPolicy: Always
+          volumeMounts:
+          - name: allio-secrets
+            mountPath: "/usr/src/app/secrets"
+      imagePullSecrets:
+        - name: regcred # secret that K8s uses to access image
+      volumes:
+      - name: allio-secrets
+        secret:
+          secretName: allio-secrets
+          defaultMode: 0600
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nest-backend
+spec:
+  selector:
+    app: nest-backend
+  ports:
+    - port: 3000 # expose the service on internal port 3000
+      targetPort: 3000 # our NodeJS app listens on port 3000

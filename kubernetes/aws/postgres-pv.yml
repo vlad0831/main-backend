@@ -1,0 +1,40 @@
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: gp2
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp2
+  fsType: ext4
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pg-pv-volume
+  labels:
+    type: aws-ebs
+spec:
+  storageClassName: gp2
+  capacity:
+    storage: 6Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  awsElasticBlockStore:
+   volumeID: vol-0aa0457c55c7b1eaf # Change here
+   fsType: ext4
+  hostPath:
+    path: '/var/lib/pg'
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pg-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: gp2
+  volumeName: pg-pv-volume
+  resources:
+    requests:
+      storage: 6Gi
